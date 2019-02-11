@@ -1,9 +1,18 @@
 #include<stdbool.h>
 #include<stdio.h>
 #include<string.h>
-bool isAlphaNum(char a)
+bool isAlpha(char a)
 {
-	if((a >= 'A' && a <= 'Z')||(a >= 'a' && a <= 'z')||(a >= '0' && a <= '9'))
+	if((a >= 'A' && a <= 'Z')||(a >= 'a' && a <= 'z'))
+		return true;
+	else
+		return false;
+}
+bool isNum(char a, bool checkpoint)
+{
+	if(a == '.' && checkpoint)
+		return true;
+	if(a >= '0' && a <= '9')
 		return true;
 	else
 		return false;
@@ -29,31 +38,23 @@ bool isSpace(char a)
 	else
 		return false;
 }
-char* parse(char* str)
+int parse(char* str)
 {
-	printf("hello\n");
 	int len = strlen(str);
 	int i = 0;
-	char result[20] = "0";
+	char result[20];
 	bool greater = false;
 	bool sec_greater = false;
 	bool equal = false;
 	bool alpha = false;
 	while(i < len)
 	{
-		printf("\n%d\n", len);
-		if(isSpace(str[i]))
-		{
-			i++;
-			continue;
-		}
 		if(isGreater(str[i]))
 		{
 			if(!alpha)
 			{
-				strcpy(result, "Dead_state");
-				printf("\nDead\n");
-				return result;
+				printf("Dead_state\n");
+				return 0;
 			}
 			else if (greater)
 			{
@@ -72,27 +73,56 @@ char* parse(char* str)
 		{
 			if(!alpha)
 			{
-				strcpy(result, "Dead_state");
-				return result;
+				printf("Dead_state\n");
+				return 0;
 			}
-			else if(greater)
+			if(greater)
 			{
 				strcpy(result, "<GE>");
 				if (sec_greater)
 					strcpy(result, "<Right_shift_ass>");
 				i++;
 			}
+			else 
+			{
+				strcpy(result, "Dead State");
+			}
 		}	
-		else if(isAlphaNum(str[i]))
+		else if(isAlpha(str[i]))
 		{
 			alpha = true;
+			while(isAlpha(str[i+1]))
+				i++;
+			if(greater || equal)
+			{
+				printf("%s\n", result);
+				greater=false;
+				sec_greater=false;
+				equal=false;
+			}
+			i++;
+		}
+		else if(isNum(str[i], false))
+		{
+			alpha = true;
+			while(isNum(str[i+1], false))
+				i++;
+			if(greater || equal)
+			{
+				printf("%s\n", result);
+				greater=false;
+				sec_greater=false;
+				equal=false;
+			}
 			i++;
 		}
 		
 	}
 }
-int main()
+/*int main()
 {
-	char str[20] = ">hello";
-	printf("%s",parse(str));
-}
+	char str[20];
+	scanf("%s", str);
+	parse(str);
+}*/
+
